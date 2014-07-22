@@ -10,15 +10,28 @@ The BulkAPI is designed to write API specially for Mobile Application and more p
 So, most of required backend functionality has done on this library.
 
 Have a look:
- 1 Efficient and dynamic URL and parameter passing
- 2 Lot's of module to devide the workflow
- 3 Google Cloud Messaging module added to send push messages
- 4 Full RESTful based header setup
- 5 Easy and clear OOP coding
- 6 Secured file system and very efficient uploading process
- 7 XHR2 uploading process
- 8 PhoneGap Camera photo upload system included
- 9 Customizable file I/O and directory system
- 10 Basic statistics provided for API usage
+========
+ 		# Efficient and dynamic URL and parameter passing
  
+ 		# Lot's of module to devide the workflow
+ 
+ 		# Google Cloud Messaging module added to send push messages
+ 		
+ 		# Full RESTful based header setup
+ 
+ 		# Easy and clear OOP coding
+ 
+ 		# Secured file system and very efficient uploading process
+ 
+ 		# XHR2 uploading process
+ 
+ 		# PhoneGap Camera photo upload system included
+ 
+ 		# Customizable file I/O and directory system
+ 
+ 		# Basic statistics provided for API usage
+ 	
  and lot's more things - though it is an initial release.
+ 	
+ 	
+for better API documentation http://bulkapi.anonnafrontend.com
