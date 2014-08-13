@@ -1,9 +1,18 @@
 <?php
+
 /**
- * Created by PhpStorm.
- * User: shaikot
- * Date: 6/28/14
- * Time: 4:13 PM
+ ************************************************************************
+ * BulkAPI
+ *
+ * An open source application development framework for PHP 5.3.0 or newer
+ *
+ * @package		BulkAPI - water fusion
+ * @author		Shariar Shaikot
+ * @copyright	Copyright (c) 2014, AnonnaFrontEnd
+ * @license		http://www.apache.org/licenses/LICENSE-2.0
+ * @link		http://bulkapi.anonnafrontend.com
+ * @since		Version (water fusion)
+ *************************************************************************
  */
 
 
@@ -32,6 +41,7 @@ class restClient {
 
 
     protected $application;
+    protected $system;
 
     /**
      * @var string
@@ -68,7 +78,8 @@ class restClient {
 
         $this->callback = isset($_GET['callback']) ? htmlspecialchars($_GET['callback']) : false;
 
-        $this->application = file_exists('application/app.php') ? 'Application' : false;
+        $this->application = file_exists('application/Application.php') ? 'Application' : false;
+        $this->system = 'BulkAPI';
     }
 
     /**
@@ -202,14 +213,20 @@ class restClient {
 
     private function methodVerifier()
     {
-        $reflection = new ReflectionClass($this->application);
+        $class = 'Application';
+        //echo $this->call; die;
+        $call = strstr($this->call, 'system/') ? str_replace('/', '_', $this->call) : $this->call;
+
+            $reflection = new ReflectionClass($class);
         $methods = $reflection->getMethods(ReflectionMethod::IS_FINAL);
         $methods = json_decode(json_encode($methods) ,true);
         //print_r($this->requestFilename); die;
         for($i=0; count($methods)>$i; $i++)
         {
-            if($methods[$i]['name']==$this->call)
+            if($methods[$i]['name']==$call)
             {
+                $this->call = $call;
+
                 return true;
             }
         }
@@ -226,7 +243,7 @@ class restClient {
      * Just about to load external helpers
      */
 
-    public function load($helper)
+    public function load($helper, $param=NULL)
     {
         $helper = strtolower($helper);
         $class = null;
@@ -234,17 +251,7 @@ class restClient {
         switch ($helper)
         {
             case 'mysql' :
-                try {
-                    error_reporting(0);
-                    $class = new MySQLhelper();
-                    $this->mysql = $class;
-                } catch(Exception $e)
-                {
-                    $this->json(array("success" => false,
-                    "response" => $e->getMessage(),
-                    "ststus" => 500));
-                    exit;
-                }
+                $class = new MySQLhelper();
 
             break;
 
@@ -261,8 +268,39 @@ class restClient {
                 $class = new Analytics();
             break;
 
+            case 'gd':
+                $class = new GDBasic();
+            break;
+
+            case 'string':
+                $class = new StringExpress($param);
+            break;
+
+            case 'session':
+                if(CUSTOM_SESSION_SAVE_HANDLER)
+                {
+                    $handler = new SessionSaveHandler();
+                    session_set_save_handler(
+                        array($handler, 'open'),
+                        array($handler, 'close'),
+                        array($handler, 'read'),
+                        array($handler, 'write'),
+                        array($handler, 'destroy'),
+                        array($handler, 'gc')
+                    );
+                }
+                $class = new SessionMangement();
+
+            break;
+
+            case 'parameters':
+
+                $this->loadParameters($_REQUEST);
+                $class = $this->parameters->args;
+            break;
+
             default:
-                $class = new stdClass();
+                throw new Exception('Module is not registred yet!');
             break;
         }
 
@@ -305,6 +343,7 @@ class restClient {
                             );
                         }else{
                             $this->application = new Application();
+                            $call = $this->call;
                             $this->application->$call();
                         }
                     }else{
@@ -340,6 +379,7 @@ class restClient {
                     {
                         $this->loadParameters($args);
                         $this->application = new Application();
+                        $call = $this->call;
                         $this->application->$call();
                     }else{
                         $this->json(array(
@@ -378,7 +418,12 @@ class restClient {
 
                                 $file = $this->requestFilename.'.'.$this->requestFilextention;
 
-                                $this->streamFile($file);
+                                ob_start();
+
+                                echo $this->streamFile($file);
+
+
+
                             }else{
                                 $this->setHeader('api', $this->requestFilextention, array());
                                 $this->json(array(
@@ -433,6 +478,7 @@ class restClient {
                     if($this->methodVerifier())
                     {
                         $this->application = new Application();
+                        $call = $this->call;
                         $this->application->$call();
                     }else{
                         $this->application = new Application();
@@ -453,7 +499,7 @@ class restClient {
      * @return bool
      */
 
-    private function loadParameters($params)
+    protected function loadParameters($params)
     {
         $this->parameters = new stdClass();
 
@@ -464,7 +510,7 @@ class restClient {
             $this->parameters->args = (object) $_GET;
             return true;
         }
-
+        error_reporting(0);
         $parameters = json_decode($params);
         if(json_last_error() == JSON_ERROR_NONE)
         {
@@ -525,6 +571,8 @@ class restClient {
         }else{
             $this->setHTTPStatus(200);
         }
+
+        ob_start();
 
         $json_encode = json_encode($config, JSON_PRETTY_PRINT);
         if($callback)
@@ -610,14 +658,58 @@ class restClient {
     {
         if(file_exists($file))
         {
-            $fp = fopen($file, 'rb');
-            while(!feof($fp))
+            //ob_start();
+            if(array_search($this->requestFilextention, array('gif', 'jpg', 'png'))!==FALSE&&isset($_SERVER['QUERY_STRING'])&&isset($_GET['resize']))
             {
-                echo fread($fp, filesize($file));
+                $static_image = 'system/images/static_image';
+                $static_image .= md5(microtime(true) * 1000);
+                $static_image .= '.';
+                $static_image .= $this->requestFilextention;
+                $fp = fopen($static_image, 'w+');
+
+                $rm_file = file_get_contents($file);//implode('', file($file));
+
+                fputs($fp, $rm_file);
+
+                fclose($fp);
+
+                $gd = $this->load('gd');
+
+                $ratio = strstr($_GET['resize'], 'x') ? false : true;
+
+                try {
+                    $buffer = $gd->resizeImage($static_image, $_GET['resize'], $ratio);
+
+                    unlink($static_image);
+
+                    return $buffer;
+
+                } catch (Exception $e) {
+
+                    if(file_exists($static_image)) unlink($static_image);
+
+                    $this->setHeader('api', $this->requestFilextention, array());
+                    $this->json(array(
+                            "success" => false,
+                            "response" => $e->getMessage(),
+                            "status" => 500
+                        ),
+                        $this->callback
+                    );
+                }
+
+
+            }else{
+                $fp = fopen($file, 'rb');
+                while(!feof($fp))
+                {
+                    return fread($fp, filesize($file));
+                }
+                flush();
+                ob_flush();
+                fclose($fp);
             }
-            flush();
-            ob_flush();
-            fclose($fp);
+
         }else{
             return false;
         }

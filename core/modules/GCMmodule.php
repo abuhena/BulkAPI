@@ -1,10 +1,20 @@
 <?php
+
 /**
- * Created by PhpStorm.
- * User: shaikot
- * Date: 7/20/14
- * Time: 12:01 AM
+ ************************************************************************
+ * BulkAPI
+ *
+ * An open source application development framework for PHP 5.3.0 or newer
+ *
+ * @package		BulkAPI - water fusion
+ * @author		Shariar Shaikot
+ * @copyright	Copyright (c) 2014, AnonnaFrontEnd
+ * @license		http://www.apache.org/licenses/LICENSE-2.0
+ * @link		http://bulkapi.anonnafrontend.com
+ * @since		Version (water fusion)
+ *************************************************************************
  */
+
 
 class GCMmodule {
 
