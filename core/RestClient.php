@@ -276,6 +276,11 @@ class restClient {
                 $class = new StringExpress($param);
             break;
 
+            case 'uploader':
+                error_reporting(0);
+                $class = new UploadHandler();
+            break;
+
             case 'session':
                 if(CUSTOM_SESSION_SAVE_HANDLER)
                 {
@@ -380,7 +385,19 @@ class restClient {
                         $this->loadParameters($args);
                         $this->application = new Application();
                         $call = $this->call;
-                        $this->application->$call();
+
+                        try {
+
+                            $this->application->$call();
+                        } catch (Exception $e)
+                        {
+                            $this->json(array(
+                                'success' => false,
+                                'response' => $e->getMessage(),
+                                'status' => 500
+                            ), $this->callback);
+                        }
+
                     }else{
                         $this->json(array(
                                 "success" => false,

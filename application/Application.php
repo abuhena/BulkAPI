@@ -25,27 +25,19 @@ class Application extends BulkAPI {
 
    public final function debug()
    {
+       $session = $this->load('session');
 
-       try {
-           $session = $this->load('session');
-
-           $session->json = array('value' => 'X Factor');
-           $session->curl;
-
-       } catch (Exception $e)
-       {
-           $err = $this->load('string', $e->getMessage());
-
-           $this->json(array(
-               'success' => false,
-               'response' => $err->toHSChars(),
-               //'message' => $vars->message,
-               'session' => $_SESSION['json'],
-               'status' => 500
-           ), $this->callback);
-       }
-
+       $session->curl;
    }
+
+    public final function upload()
+    {
+        $uploader = $this->load('uploader');
+        $uploader->imageUpload($_FILES['file'], 'hello/world', '1000x1000');
+        echo $uploader->getLastFileUri();
+        echo PHP_EOL;
+        echo $uploader->getLastFileUrl();
+    }
 
 
 }

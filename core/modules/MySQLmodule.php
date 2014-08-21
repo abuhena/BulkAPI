@@ -70,9 +70,11 @@ class MySQLhelper {
 
         }else{
 
+               $col = $this->getColumns();
+
             foreach($entry as $key=>$val)
             {
-                if(array_search($key, $this->getColumns()))
+                if(array_search($key, $col))
                 {
                     $keys[] = $key;
                     $vals[] = "'".$val."'";
@@ -105,6 +107,17 @@ class MySQLhelper {
     public function Read($table, $columns, $where=array(1=>1))
     {
         $this->table = $table;
+
+        $where_string = "WHERE ";
+        if(is_array($where)&&count($where)==1)
+        {
+            $where_string .= key($where). "='" .$where[key($where)]. "'";
+        }elseif(is_string($where)&&strstr($where, '='))
+        {
+            $where_string .= $where;
+        }else{
+            throw new Exception("MySQLi string 'WHERE' columns has an invalid format");
+        }
     }
 
     /**
@@ -116,16 +129,76 @@ class MySQLhelper {
     public function Update($table, $columns, $where=array(1=>1))
     {
         $this->table = $table;
+
+        $where_string = "WHERE ";
+        if(is_array($where)&&count($where)==1)
+        {
+            $where_string .= key($where). "='" .$where[key($where)]. "'";
+        }elseif(is_string($where)&&strstr($where, '='))
+        {
+            $where_string .= $where;
+        }else{
+            throw new Exception("MySQLi string 'WHERE' columns has an invalid format");
+        }
+
+        $update_columns = '';
+
+        if(is_array($columns)&&count($columns))
+        {
+            foreach($columns as $field=>$value)
+            {
+                $update_columns .= $field;
+                $update_columns .= "='";
+                $update_columns .= $value."'";
+                if(end($columns)!=$value)
+                {
+                    $update_columns .= ', ';
+                }
+            }
+        }elseif(is_string($columns)&&strstr($columns, '='))
+        {
+            $update_columns = $columns;
+        }else{
+            throw new Exception("MySQLi update columns has an invalid format");
+        }
+
+        $query = "UPDATE ";
+        $query .= $this->table;
+        $query .= " SET ";
+        $query .= $update_columns;
+        $query .= $where_string;
+
+        return $this->mysqli->query($query);
     }
 
     /**
      * @param $table
      * @param array $where
+     * @return bool|mysqli_result
+     * @throws Exception
      */
 
     public function Delete($table, $where=array(1=>1))
     {
         $this->table = $table;
+
+        $where_string = "WHERE ";
+        if(is_array($where)&&count($where)==1)
+        {
+            $where_string .= key($where). "='" .$where[key($where)]. "'";
+        }elseif(is_string($where)&&strstr($where, '='))
+        {
+            $where_string .= $where;
+        }else{
+            throw new Exception("MySQLi string 'WHERE' columns has an invalid format");
+        }
+
+        $query = "DELETE FROM ";
+        $query .= $this->table;
+        $query .= " ";
+        $query .= $where_string;
+
+        return $this->mysqli->query($query);
     }
 
     public function __destruct()

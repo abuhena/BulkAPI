@@ -15,6 +15,7 @@ require_once PATH_TO_GDBASIC;
 require_once PATH_TO_STRINGEXPRESS;
 require_once PATH_TO_SESSIONMODULE;
 require_once PATH_TO_SESSIONSAVEHANDLER;
+require_once PATH_TO_UPLOADER;
 
 /**
  * Application Settings

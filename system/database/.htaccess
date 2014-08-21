@@ -1,1 +1,3 @@
+#This is just denaing users to access the direct scripting
+
 Deny from all

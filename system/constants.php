@@ -20,5 +20,6 @@ define('PATH_TO_GDBASIC', 'core/modules/GDBasic.php');
 define('PATH_TO_STRINGEXPRESS', 'core/modules/StringExpress.php');
 define('PATH_TO_SESSIONMODULE', 'core/modules/SessionModule.php');
 define('PATH_TO_SESSIONSAVEHANDLER', 'core/modules/SessionSaveHandler.php');
+define('PATH_TO_UPLOADER', 'core/modules/Uploader.php');
 
 define('DIR_KEY', md5('Hello, World!'));
