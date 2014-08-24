@@ -32,6 +32,19 @@ Have a look:
  		# Basic statistics provided for API usage
  	
  and lot's more things - though it is an initial release.
+ 
+ Getting started:
+ =========
+ Basically the application is very based on Object Oriented PHP but we're not using MVC pattern - because we designed
+ this Application for using API development and more specifically for mobile application's business logic and we already  aware of that thing.
+ Well, we have directory designed as :
+      
+      /application
+      /core
+      /system
+      /users
+      .htaccess
+      index.php
  	
  	
 for better API documentation http://bulkapi.anonnafrontend.com
