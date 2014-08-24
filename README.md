@@ -37,6 +37,7 @@ Getting started:
 ========
  Basically the application is very based on Object Oriented PHP but we're not using MVC pattern - because we designed
  this Application for using API development and more specifically for mobile application's business logic and we already  aware of that thing.
+ 
  Well, we have directory designed as :
       
       /application
@@ -45,6 +46,15 @@ Getting started:
       /users
       .htaccess
       index.php
- 	
+ 
+ for getting started open -> system -> configuration.php -> That file is well organized and this will lead you to configure your settings and offcourse our Application doesn't require too much configuartion to start.
+ 
+ Let's write down some codes for real life API call:
+ Open /application -> Application.php -> Now we can see 
+       
+       class Application extends BulkAPI {
+       
+ there we have to go , 
+ 
  	
 for better API documentation http://bulkapi.anonnafrontend.com
