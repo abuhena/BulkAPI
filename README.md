@@ -38,6 +38,8 @@ Getting started:
  Basically the application is very based on Object Oriented PHP but we're not using MVC pattern - because we designed
  this Application for using API development and more specifically for mobile application's business logic and we already  aware of that thing.
  
+ Please read all files documentation, those will also lead you to understanding the Application concept and coding style as well.
+ 
  Well, we have directory designed as :
       
       /application
@@ -49,12 +51,41 @@ Getting started:
  
  for getting started open -> system -> configuration.php -> That file is well organized and this will lead you to configure your settings and offcourse our Application doesn't require too much configuartion to start.
  
+ /core/modules directory containing all plugins/modules those will let you use external facilities, by just executing 
+    
+    $this->load('module name');
+ 
  Let's write down some codes for real life API call:
  Open /application -> Application.php -> Now we can see 
        
        class Application extends BulkAPI {
        
- there we have to go , 
+ there we have to go , let's think we have to create an API call name /login.json
+ it would be very simple to just start the making the API call -
+ Write a new method under the Appication class (described above) with access modifier to "public final" 
+ Our system will only recognize methods with final modifier for making a new API or any call.
+ lets look at the example codes:
+ 
+     class Application extends BulkAPI {
+         
+         public final function login()
+         {
+             $params = $this->load('parameters'); // $_GET / $_POST parameters loaded
+             $mysqli = $this->load('mysql'); // load mysqli module 
+             
+             if(!empty($params->username) || !empty($params->password))
+             {
+             
+                 //Your login verifing code should e gose here
+             
+             }else{
+                
+                throw new Exception('Username/Password field can not be empty');
+                
+             }
+         }
+        
+     }
  
  	
 for better API documentation http://bulkapi.anonnafrontend.com
