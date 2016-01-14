@@ -65,7 +65,8 @@ Getting started:
  Write a new method under the Appication class (described above) with access modifier to "public final" 
  Our system will only recognize methods with final modifier for making a new API or any call.
  lets look at the example codes:
- 
+
+```php
      class Application extends BulkAPI {
          
          public final function login()
@@ -86,6 +87,6 @@ Getting started:
          }
         
      }
- 
+ ```
  	
 for better API documentation http://bulkapi.anonnafrontend.com
